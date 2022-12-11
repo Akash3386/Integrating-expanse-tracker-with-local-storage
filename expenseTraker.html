@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   <form name="myform" id="my">
+    
+    <label>Choose expenseamount:</label>
+    <input type="number" value="" id="number" name="expenseAmount">
+    <label>Choose description:</label>
+    <input type="text" value="" id="text" name="description">
+    <label>Choose a catagory:</label>
+    <input type="text" id="option" name="category" value="" list="exampleList">
+      <datalist id="exampleList">
+        <option value="movie">  
+        <option value="fuel">
+        <option value="food">  
+        <option value="electricity">      
+      </datalist>
+    <button id="submitButton">Add Expense</button>  
+  </form> 
+  <ul id="list" class="list-group">
+
+  </ul> 
+  
+    
+    <script>
+        const expenseAmount = document.getElementById("number");
+        const description = document.getElementById("text");
+        const category = document.getElementById("option");
+        const element = document.getElementById("list");
+        const formSubmit = document.getElementById("my")
+        
+        formSubmit.addEventListener("submit",onSubmit);
+        element.addEventListener("click",onDelete); 
+        element.addEventListener("click",onEdit);       
+
+        Object.keys(localStorage).forEach((key)=>{
+        
+        const Screen = document.createElement("li");   
+        
+        stringfifiedDetail = localStorage.getItem(key); // to get the element from localstorage in form of string
+        details = JSON.parse(stringfifiedDetail); // to get the element from localstostage back in form of object
+      
+
+        Screen.append(document.createTextNode(`${details.amount}-${details.description}-${details.category} `));
+        Screen.className = `${details.description}`
+        element.appendChild(Screen);
+        // console.log(collect);
+
+        const delBtn = document.createElement("button");
+        const editBtn = document.createElement("button");
+
+        delBtn.className = "btn delete";
+        editBtn.className = "btn edit"
+
+
+        delBtn.append(document.createTextNode("Delete Expense"));
+        editBtn.append(document.createTextNode("Edit expense"));
+
+        Screen.append(delBtn,editBtn);
+        
+        })
+
+
+        function onSubmit(e){
+          
+            e.preventDefault();
+            // console.log(e);
+            let myObj={
+            amount: `${expenseAmount.value}`,
+            description: `${description.value}`,
+            category: `${category.value}`
+            }
+            localStorage.setItem(myObj.description,JSON.stringify(myObj));
+
+            const Screen= document.createElement("li");
+
+            Screen.append(document.createTextNode(`${expenseAmount.value}-${description.value}-${category.value} `));
+            element.appendChild(Screen);
+            Screen.className = `${description.value}`;
+
+            const delBtn = document.createElement("button");
+            const editBtn = document.createElement("button");
+
+            delBtn.appendChild(document.createTextNode("Delete Expense"));
+            editBtn.appendChild(document.createTextNode("Edit expense"));
+
+            delBtn.className = "btn delete";
+            editBtn.className = "btn edit";
+
+            Screen.append(delBtn,editBtn);
+            
+
+            expenseAmount.value="";
+            description.value="";
+            category.value="";
+          }
+
+          function onDelete(e){
+            
+            if(e.target.classList.contains("delete")){
+              var li = e.target.parentElement;
+              
+              Object.keys(localStorage).forEach((key)=>{
+        
+                stringfifiedDetail = localStorage.getItem(key); // to get the element from localstorage in form of string
+                details = JSON.parse(stringfifiedDetail); // to get the element from localstostage back in form of object
+                if (details.description===li.className){
+                  localStorage.removeItem(details.description);
+                  
+                }
+              })
+              list.removeChild(li);
+             
+            }
+         }
+          
+          function onEdit(e){
+            if (e.target.classList.contains("edit")){
+              var li = e.target.parentElement;
+              
+              Object.keys(localStorage).forEach((key)=>{
+        
+                stringfifiedDetail = localStorage.getItem(key); // to get the element from localstorage in form of string
+                details = JSON.parse(stringfifiedDetail); // to get the element from localstostage back in form of object
+                if (details.description===li.className){
+                  localStorage.removeItem(details.description);
+                  
+                }
+              })
+              list.removeChild(li);
+              expenseAmount.value = details.amount;
+              description.value = details.description;
+              category.value = details.category
+            }
+          }
+        
+
+      
+    
+        
+    </script>
+    
+</body>
+</html>
